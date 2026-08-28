@@ -97,8 +97,8 @@ function iso(d: Date) {
 }
 
 export function computeHours(timeIn: string, timeOut: string, breakMinutes: number) {
-  const [ih, im] = timeIn.split(":").map(Number);
-  const [oh, om] = timeOut.split(":").map(Number);
+  const [ih = 0, im = 0] = timeIn.split(":").map(Number);
+  const [oh = 0, om = 0] = timeOut.split(":").map(Number);
   let minutes = oh * 60 + om - (ih * 60 + im);
   if (minutes < 0) minutes += 24 * 60; // overnight shift
   minutes -= breakMinutes;
@@ -112,7 +112,7 @@ export function buildDemoState(): DemoState {
   const workers: Worker[] = NAMES.map((name, i) => {
     const basic = 1150 + (i % 5) * 130;
     const expiry = new Date();
-    expiry.setMonth(expiry.getMonth() + [3, 26, 14, 1, 19, 31, 8, 22, 5, 29, 11, 16][i]);
+    expiry.setMonth(expiry.getMonth() + ([3, 26, 14, 1, 19, 31, 8, 22, 5, 29, 11, 16][i] ?? 6));
     const passportExpiry = iso(expiry);
     const monthsToExpiry = (expiry.getTime() - Date.now()) / (1000 * 60 * 60 * 24 * 30);
     const join = new Date();
@@ -121,11 +121,11 @@ export function buildDemoState(): DemoState {
       id: `w${i + 1}`,
       code: `OW-${pad(101 + i)}`,
       name,
-      nationality: NATIONS[i % NATIONS.length],
-      position: POSITIONS[i % POSITIONS.length],
-      passportNo: `${["N", "BX", "P", "MM", "K", "A"][i % 6]}${pad(4820371 + i * 913, 7)}`,
+      nationality: NATIONS[i % NATIONS.length]!,
+      position: POSITIONS[i % POSITIONS.length]!,
+      passportNo: `${["N", "BX", "P", "MM", "K", "A"][i % 6]!}${pad(4820371 + i * 913, 7)}`,
       passportExpiry,
-      shipyard: YARDS[i % YARDS.length],
+      shipyard: YARDS[i % YARDS.length]!,
       joinDate: iso(join),
       status: i === 9 ? "On Leave" : "Active",
       phone: `+65 8${pad(120 + i * 7, 3)} ${pad(4400 + i * 13, 4)}`,
@@ -162,7 +162,7 @@ export function buildDemoState(): DemoState {
       const n = Number(w.id.slice(1));
       if ((back + n) % 11 === 0) continue; // occasional absence
       if (w.status === "On Leave" && back < 6) continue;
-      const otHrs = [0, 0, 1, 2, 2.5, 3, 0, 1.5][(back + n) % 8];
+      const otHrs = [0, 0, 1, 2, 2.5, 3, 0, 1.5][(back + n) % 8] ?? 0;
       const timeIn = "08:00";
       const outMinutes = 8 * 60 + 60 + otHrs * 60; // + 1h break
       const oh = Math.floor((8 * 60 + outMinutes) / 60);
@@ -177,7 +177,7 @@ export function buildDemoState(): DemoState {
         timeOut,
         breakMinutes: 60,
         ...calc,
-        remarks: otHrs >= 3 ? "Extended shift — hull block fit-up" : undefined,
+        ...(otHrs >= 3 ? { remarks: "Extended shift — hull block fit-up" } : {}),
       });
     }
   }
