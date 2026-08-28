@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AttendanceRouteImport } from './routes/attendance'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as PayrollRouteImport } from './routes/payroll'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as WorkersIndexRouteImport } from './routes/workers.index'
+import { Route as WorkersIdRouteImport } from './routes/workers.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AttendanceRoute = AttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkersIndexRoute = WorkersIndexRouteImport.update({
+  id: '/workers/',
+  path: '/workers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorkersIdRoute = WorkersIdRouteImport.update({
+  id: '/workers/$id',
+  path: '/workers/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/payroll': typeof PayrollRoute
+  '/settings': typeof SettingsRoute
+  '/workers/$id': typeof WorkersIdRoute
+  '/workers/': typeof WorkersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/payroll': typeof PayrollRoute
+  '/settings': typeof SettingsRoute
+  '/workers/$id': typeof WorkersIdRoute
+  '/workers': typeof WorkersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/attendance': typeof AttendanceRoute
+  '/dashboard': typeof DashboardRoute
+  '/payroll': typeof PayrollRoute
+  '/settings': typeof SettingsRoute
+  '/workers/$id': typeof WorkersIdRoute
+  '/workers/': typeof WorkersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/attendance'
+    | '/dashboard'
+    | '/payroll'
+    | '/settings'
+    | '/workers/$id'
+    | '/workers/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/attendance'
+    | '/dashboard'
+    | '/payroll'
+    | '/settings'
+    | '/workers/$id'
+    | '/workers'
+  id:
+    | '__root__'
+    | '/'
+    | '/attendance'
+    | '/dashboard'
+    | '/payroll'
+    | '/settings'
+    | '/workers/$id'
+    | '/workers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AttendanceRoute: typeof AttendanceRoute
+  DashboardRoute: typeof DashboardRoute
+  PayrollRoute: typeof PayrollRoute
+  SettingsRoute: typeof SettingsRoute
+  WorkersIdRoute: typeof WorkersIdRoute
+  WorkersIndexRoute: typeof WorkersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/attendance': {
+      id: '/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workers/': {
+      id: '/workers/'
+      path: '/workers'
+      fullPath: '/workers/'
+      preLoaderRoute: typeof WorkersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/workers/$id': {
+      id: '/workers/$id'
+      path: '/workers/$id'
+      fullPath: '/workers/$id'
+      preLoaderRoute: typeof WorkersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AttendanceRoute: AttendanceRoute,
+  DashboardRoute: DashboardRoute,
+  PayrollRoute: PayrollRoute,
+  SettingsRoute: SettingsRoute,
+  WorkersIdRoute: WorkersIdRoute,
+  WorkersIndexRoute: WorkersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
