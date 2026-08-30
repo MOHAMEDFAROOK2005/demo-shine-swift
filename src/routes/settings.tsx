@@ -42,9 +42,9 @@ function SettingsPage() {
           <h2 className="font-display text-base font-semibold">Demo credentials</h2>
           <div className="mt-3 space-y-2 text-sm">
             {Object.entries(DEMO_USERS).map(([role, u]) => (
-              <div key={role} className="flex items-center justify-between rounded-md bg-secondary px-3 py-2">
+              <div key={role} className="flex flex-col gap-1 rounded-md bg-secondary px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
                 <span className="font-medium">{role}</span>
-                <span className="tabular text-xs text-muted-foreground">
+                <span className="tabular break-all text-xs text-muted-foreground sm:break-normal sm:text-right">
                   {u.email} / {u.password}
                 </span>
               </div>

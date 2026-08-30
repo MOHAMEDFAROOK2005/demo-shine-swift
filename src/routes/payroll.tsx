@@ -140,13 +140,15 @@ function PayrollPage() {
                 <td className="tabular px-4 py-3 text-right">{money(l.otPay)}</td>
                 <td className="tabular px-4 py-3 text-right text-muted-foreground">-{money(l.deductions)}</td>
                 <td className="tabular px-4 py-3 text-right font-semibold">{money(l.net)}</td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-1.5">
+                <td className="px-4 py-3 text-right sm:px-5">
+                  <div className="flex flex-col justify-end gap-1.5 sm:flex-row">
                     <Button size="sm" variant="outline" onClick={() => generate(l)}>
-                      <FileText /> Preview
+                      <FileText className="size-3.5" />
+                      <span className="hidden sm:inline">Preview</span>
                     </Button>
                     <Button size="sm" onClick={() => download(l)}>
-                      <Download /> PDF
+                      <Download className="size-3.5" />
+                      <span className="hidden sm:inline">PDF</span>
                     </Button>
                   </div>
                 </td>

@@ -66,7 +66,7 @@ function WorkerDetail() {
       }
     >
       <Tabs defaultValue="details">
-        <TabsList>
+        <TabsList className="h-auto w-full flex-wrap justify-start gap-1">
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="documents">Documents</TabsTrigger>
           <TabsTrigger value="attendance">Attendance</TabsTrigger>

@@ -125,8 +125,8 @@ function WorkersPage() {
         </Dialog>
       }
     >
-      <div className="card-surface flex flex-wrap items-center gap-3 p-4">
-        <div className="relative min-w-56 flex-1">
+      <div className="card-surface flex flex-col gap-3 p-4 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="relative w-full min-w-0 sm:min-w-56 sm:flex-1">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={q}

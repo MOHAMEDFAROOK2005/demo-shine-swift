@@ -5,10 +5,12 @@ import {
   CalendarClock,
   LayoutDashboard,
   LogOut,
+  Menu,
   Settings,
   Users,
   Wallet,
 } from "lucide-react";
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { getSession, hydrateStore, signOut, type DemoSession } from "@/lib/demo-store";
 
 const NAV = [
@@ -18,6 +20,72 @@ const NAV = [
   { to: "/payroll", label: "Payroll & Payslips", icon: Wallet },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
+
+function SidebarBrand() {
+  return (
+    <div className="flex items-center gap-3 px-2">
+      <span className="bg-accent-gradient flex size-9 shrink-0 items-center justify-center rounded-lg text-accent-foreground">
+        <Anchor className="size-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="font-display truncate text-sm font-semibold leading-tight">Ocean Workforce</p>
+        <p className="truncate text-[11px] text-deep-foreground/60">Shipyard manpower suite</p>
+      </div>
+    </div>
+  );
+}
+
+function NavLinks({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <nav className="space-y-1">
+      {NAV.map(({ to, label, icon: Icon }) => {
+        const active = pathname === to || pathname.startsWith(`${to}/`);
+        return (
+          <Link
+            key={to}
+            to={to}
+            onClick={onNavigate}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+              active
+                ? "bg-surface-deep-soft font-semibold text-deep-foreground"
+                : "text-deep-foreground/70 hover:bg-surface-deep-soft/60"
+            }`}
+          >
+            <Icon className="size-4 shrink-0" />
+            <span className="truncate">{label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function SessionCard({
+  session,
+  onSignOut,
+}: {
+  session: DemoSession;
+  onSignOut: () => void;
+}) {
+  return (
+    <div className="rounded-lg bg-surface-deep-soft/70 p-3">
+      <p className="truncate text-sm font-medium">{session.name}</p>
+      <p className="mb-3 truncate text-[11px] text-deep-foreground/60">{session.role} · demo session</p>
+      <button
+        onClick={onSignOut}
+        className="flex w-full items-center justify-center gap-2 rounded-md border border-deep-foreground/20 px-2 py-1.5 text-xs transition-colors hover:bg-surface-deep-soft"
+      >
+        <LogOut className="size-3.5" /> Sign out
+      </button>
+    </div>
+  );
+}
 
 export function AppShell({
   title,
@@ -33,6 +101,7 @@ export function AppShell({
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [session, setSession] = useState<DemoSession | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     hydrateStore();
@@ -41,79 +110,65 @@ export function AppShell({
     else setSession(s);
   }, [navigate]);
 
+  function handleSignOut() {
+    signOut();
+    void navigate({ to: "/" });
+  }
+
   if (!session) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="bg-deep sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between px-4 py-6 text-deep-foreground md:flex">
+      {/* Desktop sidebar */}
+      <aside className="bg-deep sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between px-4 py-6 text-deep-foreground lg:flex">
         <div>
-          <div className="mb-8 flex items-center gap-3 px-2">
-            <span className="bg-accent-gradient flex size-9 items-center justify-center rounded-lg text-accent-foreground">
-              <Anchor className="size-5" />
-            </span>
-            <div>
-              <p className="font-display text-sm font-semibold leading-tight">Ocean Workforce</p>
-              <p className="text-[11px] text-deep-foreground/60">Shipyard manpower suite</p>
-            </div>
+          <div className="mb-8">
+            <SidebarBrand />
           </div>
-          <nav className="space-y-1">
-            {NAV.map(({ to, label, icon: Icon }) => {
-              const active = pathname === to || pathname.startsWith(`${to}/`);
-              return (
-                <Link
-                  key={to}
-                  to={to}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                    active
-                      ? "bg-surface-deep-soft font-semibold text-deep-foreground"
-                      : "text-deep-foreground/70 hover:bg-surface-deep-soft/60"
-                  }`}
-                >
-                  <Icon className="size-4" />
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
+          <NavLinks pathname={pathname} />
         </div>
-        <div className="rounded-lg bg-surface-deep-soft/70 p-3">
-          <p className="text-sm font-medium">{session.name}</p>
-          <p className="mb-3 text-[11px] text-deep-foreground/60">{session.role} · demo session</p>
-          <button
-            onClick={() => {
-              signOut();
-              void navigate({ to: "/" });
-            }}
-            className="flex w-full items-center justify-center gap-2 rounded-md border border-deep-foreground/20 px-2 py-1.5 text-xs transition-colors hover:bg-surface-deep-soft"
-          >
-            <LogOut className="size-3.5" /> Sign out
-          </button>
-        </div>
+        <SessionCard session={session} onSignOut={handleSignOut} />
       </aside>
 
-      <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-10 border-b border-border bg-card/85 backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 md:px-8">
+      {/* Mobile drawer */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="bg-deep w-72 border-none p-0 text-deep-foreground">
+          <SheetTitle className="sr-only">Navigation menu</SheetTitle>
+          <div className="flex h-full flex-col justify-between px-4 py-6">
             <div>
-              <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>
-              {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+              <div className="mb-8 pr-8">
+                <SidebarBrand />
+              </div>
+              <NavLinks pathname={pathname} onNavigate={() => setMobileOpen(false)} />
             </div>
-            <div className="flex items-center gap-2">{actions}</div>
+            <SessionCard session={session} onSignOut={handleSignOut} />
           </div>
-          <nav className="flex gap-1 overflow-x-auto border-t border-border px-3 py-2 md:hidden">
-            {NAV.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="whitespace-nowrap rounded-md px-3 py-1.5 text-xs text-muted-foreground"
-                activeProps={{ className: "bg-secondary font-semibold text-foreground" }}
+        </SheetContent>
+      </Sheet>
+
+      <div className="min-w-0 flex-1">
+        <header className="sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur-sm">
+          <div className="flex items-start justify-between gap-3 px-4 py-3 sm:items-center sm:px-6 sm:py-4 lg:px-8">
+            <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-foreground transition-colors hover:bg-secondary lg:hidden"
+                aria-label="Open navigation menu"
               >
-                {label}
-              </Link>
-            ))}
-          </nav>
+                <Menu className="size-5" />
+              </button>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-semibold sm:text-xl md:text-2xl">{title}</h1>
+                {subtitle && <p className="truncate text-xs text-muted-foreground sm:text-sm">{subtitle}</p>}
+              </div>
+            </div>
+            {actions && (
+              <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">{actions}</div>
+            )}
+          </div>
         </header>
-        <main className="px-5 py-6 md:px-8 md:py-8">{children}</main>
+        <main className="px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">{children}</main>
       </div>
     </div>
   );

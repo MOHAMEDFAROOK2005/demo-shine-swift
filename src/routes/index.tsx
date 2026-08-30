@@ -85,8 +85,17 @@ function LoginPage() {
         </p>
       </div>
 
-      <div className="flex items-center justify-center px-6 py-12">
+      <div className="flex items-center justify-center px-5 py-10 sm:px-6 sm:py-12">
         <div className="w-full max-w-sm">
+          <div className="mb-6 flex items-center gap-3 lg:hidden">
+            <span className="bg-accent-gradient flex size-10 items-center justify-center rounded-lg text-accent-foreground">
+              <Anchor className="size-5" />
+            </span>
+            <div>
+              <p className="font-display text-base font-semibold">Ocean Workforce</p>
+              <p className="text-xs text-muted-foreground">Shipyard manpower suite</p>
+            </div>
+          </div>
           <h2 className="text-2xl font-semibold">Sign in to the demo</h2>
           <p className="mt-1 text-sm text-muted-foreground">No account or verification needed.</p>
 
